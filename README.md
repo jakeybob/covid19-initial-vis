@@ -20,12 +20,19 @@ Some quick plots of data from the COVID-19 outbreak, data sourced from [here](ht
 
 * The number of new confirmed cases per day (top six countries only)
 
-![new confirmed cases per day for the countries with the six highest recent rates](pics/p_cases_per_day_country_facet.png)
+![](pics/p_cases_per_day_country_facet.png)
 
 
 ## Mortality and Recovery
 
+* Global mortality rate (left) and both global mortality and recovery rates (right).
 
+![](pics/p_both_mortality_recovered.png)
 
+* Mortality rates for each affected country.
 
+![](pics/p_mortality_facet.png)
 
+* Recovery rates for each affected country.
+
+![](pics/p_recovered_facet.png)
