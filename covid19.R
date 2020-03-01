@@ -1,6 +1,7 @@
 library(tidyverse)
 library(lubridate)
 library(scales)
+library(patchwork)
 
 #### GET DATA ####
 base_url <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
@@ -127,5 +128,71 @@ ggsave("pics/p_cases_per_day_country_facet.png", device = "png", dpi="retina", w
 # p_cases_per_day_country_facet$data <- p_cases_per_day_country_facet$data %>% ungroup()
 # plotly::ggplotly(p_cases_per_day_country_facet)
 
+
+#### RECOVERED / DEATHS ####
+
+global_mortality <- sum(df$n_deaths, na.rm=T)/sum(df$n_cases, na.rm=T)
+p_global_mortality <- df %>%
+  group_by(date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
+  mutate(percent_mortality = n_deaths / n_cases,
+         percent_recovered = n_recovered / n_cases,) %>%
+  ggplot(aes(x = date)) +
+  geom_hline(yintercept = global_mortality, colour="red") +
+  geom_point(aes(y = percent_mortality), size=dot_size) + geom_step(aes(y = percent_mortality), size=line_size) +
+  scale_y_continuous(labels = percent_format(accuracy = .25)) +
+  annotate("text", label=paste0("", round(100*global_mortality, 2), "%"), 
+           x=max(df$date), y=global_mortality+5e-4, colour="red") +
+  ggtitle("COVID-19 global mortality rate") + xlab("") + ylab("") +
+  theme_custom
+p_global_mortality
+# ggsave("pics/p_global_mortality.png", device = "png", dpi="retina", width=300, height=200, units="mm")
+
+p_global_mortality_recovered <- df %>%
+  group_by(date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
+  mutate(percent_mortality = n_deaths / n_cases,
+         percent_recovered = n_recovered / n_cases) %>% 
+  pivot_longer(cols = starts_with("percent")) %>%
+  ggplot(aes(x = date, y = value, group=name)) +
+  geom_point(aes(colour=name), size=dot_size) + geom_step(aes(colour=name), size=line_size) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_color_hue(labels = c("mortality", "recovery")) +
+  ggtitle("COVID-19 global mortality & recovery rates") + xlab("") + ylab("") +
+  theme_custom + theme(legend.position = "bottom")
+p_global_mortality_recovered
+# ggsave("pics/p_global_mortality_recovered.png", device = "png", dpi="retina", width=300, height=200, units="mm")
+
+p_both_mortality_recovered <- p_global_mortality + p_global_mortality_recovered
+ggsave("pics/p_both_mortality_recovered.png", device = "png", dpi="retina", width=300, height=200, units="mm")
+
+
+p_mortality_facet <- df %>%
+  group_by(area, date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
+  mutate(percent_deaths = n_deaths / n_cases) %>%
+  group_by(area) %>% filter(sum(percent_deaths, na.rm=T) > 0) %>%
+  ggplot(aes(x = date, y = percent_deaths, group = area)) +
+  geom_point(size=dot_size-2) + geom_step(size=line_size-1) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  facet_wrap(~area, scales = "free_y") +
+  ggtitle("COVID-19 mortality rates") + xlab("") + ylab("") +
+  theme_custom + theme(axis.text.x = element_text(angle = 90),
+                       axis.text.y = element_text(size=8),
+                       legend.position = "none")
+p_mortality_facet
+ggsave("pics/p_mortality_facet.png", device = "png", dpi="retina", width=300, height=200, units="mm")
+
+p_recovered_facet <- df %>%
+  group_by(area, date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
+  mutate(percent_recovered = n_recovered / n_cases) %>%
+  group_by(area) %>% filter(sum(percent_recovered, na.rm=T) > 0) %>%
+  ggplot(aes(x = date, y = percent_recovered, group = area)) +
+  geom_point(size=dot_size-2) + geom_step(size=line_size-1) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  facet_wrap(~area, scales = "free_y") +
+  ggtitle("COVID-19 recovery rates") + xlab("") + ylab("") +
+  theme_custom + theme(axis.text.x = element_text(angle = 90),
+                       axis.text.y = element_text(size=8),
+                       legend.position = "none")
+p_recovered_facet
+ggsave("pics/p_recovered_facet.png", device = "png", dpi="retina", width=300, height=200, units="mm")
 
 
