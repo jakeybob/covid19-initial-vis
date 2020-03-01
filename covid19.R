@@ -196,3 +196,17 @@ p_recovered_facet
 ggsave("pics/p_recovered_facet.png", device = "png", dpi="retina", width=300, height=200, units="mm")
 
 
+####
+library(gganimate)
+df %>%
+  filter(area == "China") %>%
+  group_by(area, date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
+  mutate(percent_recovered = n_recovered / n_cases,
+         percent_deaths = n_deaths / n_cases) %>%
+  # filter(date == min(date)) %>%
+  ggplot(aes(x = percent_recovered, y = percent_deaths)) +
+  geom_point() +
+    transition_time(date) +
+    ease_aes('linear')
+  
+  
