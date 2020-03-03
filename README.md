@@ -1,5 +1,7 @@
 # covid19-vis
-Some quick plots of data from the COVID-19 outbreak, data sourced from [here](https://github.com/CSSEGISandData/COVID-19).
+Some quick plots of data from the COVID-19 outbreak, data sourced from [here](https://github.com/CSSEGISandData/COVID-19). 
+
+Latest data is from **2<sup>nd</sup> March 2020**.
 
 ## Caveats
 
@@ -7,7 +9,7 @@ Some quick plots of data from the COVID-19 outbreak, data sourced from [here](ht
 * all data is provisional and subject to change
 * standards and definitions of e.g. "recovery" may differ in different countries
 * at this point, the time to recovery (or death) is comparable to the total observation time, so all data is subject to e.g. phase lag effects -- e.g. mortality rate will go down if an area has a sudden glut of confirmed cases, simply because those new cases are ongoing and have unknown recovery/mortality status
-* No error bars or confidence intervals are included for exactly this reason
+* no error bars or confidence intervals are included for exactly this reason
 
 ## Cases by country
 
