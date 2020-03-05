@@ -271,7 +271,7 @@ p_com_1 <- com_df %>%
   geom_point(aes(size = n_cases, colour=date)) +
   geom_path(arrow = arrow(type="closed")) +
   theme(legend.position = "none") +
-  xlab("latitude °") + ylab("longitude °") + ggtitle("COVID-19 'centre of mass'") +
+  xlab("longitude °") + ylab("latitude °") + ggtitle("COVID-19 'centre of mass'") +
   labs(size="cases", colour="date") +
   theme_custom + theme(legend.position = "left",
                        legend.title=element_text(size=10, family = "Source Sans Pro"))
