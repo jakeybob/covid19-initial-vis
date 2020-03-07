@@ -1,7 +1,7 @@
 # covid19-vis
 Some quick plots of data from the COVID-19 outbreak, data sourced from [here](https://github.com/CSSEGISandData/COVID-19). 
 
-Latest data is from **5<sup>th</sup> March 2020**.
+Latest data is from **6<sup>th</sup> March 2020**.
 
 ## Caveats
 
@@ -53,7 +53,7 @@ Latest data is from **5<sup>th</sup> March 2020**.
 
 ## Spatial Evolution
 
-* On the left is the spherical weighted average of latitiude and longitude (where smallest area is recorded as e.g. Chinese province) of confirmed cases. As the majority of cases are still in Hubei, China, the "centre of mass" of the outbreak is still in China, currently moving west at about ~4° a week.
+* On the left is the spherical weighted average of latitiude and longitude (where smallest area is recorded as e.g. Chinese province) of confirmed cases. As the majority of cases are still in Hubei, China, the "centre of mass" of the outbreak is still in China, currently moving west at about ~6° a week and south at roughly half that pace.
 * By transforming the latitudes and longitudes into spherical co-ordinates before averaging, we can obtain the average distance from the centre of the Earth, and use this as a first order proxy for weighted disease spread, i.e. here a value of 0 would indicate all the cases are in exactly the same place, and a value of 1 indicates equal spread over a full hemisphere.
 
 ![](pics/p_com.png)
