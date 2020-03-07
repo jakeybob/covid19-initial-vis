@@ -144,7 +144,7 @@ p_global_mortality <- df %>%
   ggplot(aes(x = date)) +
   geom_hline(yintercept = global_mortality, colour="red") +
   geom_point(aes(y = percent_mortality), size=dot_size) + geom_step(aes(y = percent_mortality), size=line_size) +
-  scale_y_continuous(labels = percent_format(accuracy = .25)) +
+  scale_y_continuous(labels = percent_format(accuracy = .1)) +
   annotate("text", label=paste0("", round(100*global_mortality, 2), "%"),
            x=max(df$date), y=global_mortality+5e-4, colour="red") +
   ggtitle("COVID-19 global mortality rate") + xlab("") + ylab("") +
@@ -173,10 +173,10 @@ ggsave("pics/p_both_mortality_recovered.png", device = "png", dpi="retina", widt
 p_mortality_facet <- df %>%
   group_by(area, date) %>% summarise_at(vars(starts_with("n_")), sum, na.rm=T) %>%
   mutate(percent_deaths = n_deaths / n_cases) %>%
-  group_by(area) %>% filter(sum(percent_deaths, na.rm=T) > 0) %>%
+  group_by(area) %>% filter(sum(percent_deaths, na.rm=T) > 0) %>% #View()
   ggplot(aes(x = date, y = percent_deaths, group = area)) +
   geom_point(size=dot_size-2) + geom_step(size=line_size-1) +
-  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_y_continuous(labels = percent_format(accuracy = .1)) +
   facet_wrap(~area, scales = "free_y") +
   ggtitle("COVID-19 mortality rates") + xlab("") + ylab("") +
   theme_custom + theme(axis.text.x = element_text(angle = 90),
@@ -225,6 +225,7 @@ anim <- plot_data %>%
   theme_custom  + theme(legend.title=element_text(size=10, family = "Source Sans Pro")) +
   scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .1)) +
   scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .7)) +
+  scale_size_continuous(labels = comma) +
   labs(title = 'COVID-19 Recovery/Mortality {frame_time}', x = 'recovered', y = 'mortality', 
        size="cases", colour="") +
   transition_time(date) +
@@ -274,8 +275,11 @@ p_com_1 <- com_df %>%
   geom_point(aes(size = n_cases, colour=date)) +
   geom_path(arrow = arrow(type="closed")) +
   theme(legend.position = "none") +
-  xlab("longitude °") + ylab("latitude °") + ggtitle("COVID-19 'centre of mass'") +
+  xlab("longitude") + ylab("latitude") + ggtitle("COVID-19 'centre of mass'") +
   labs(size="cases", colour="date") +
+  scale_y_continuous(labels = number_format(accuracy = 1, suffix = "° N")) +
+  scale_x_continuous(labels = number_format(accuracy = 1, suffix = "° E")) +
+  scale_size_continuous(labels = comma) +
   theme_custom + theme(legend.position = "left",
                        legend.title=element_text(size=10, family = "Source Sans Pro"))
 p_com_1
@@ -285,6 +289,7 @@ p_com_2 <- com_df %>%
   geom_line() +
   theme(legend.position = "none") +
   xlab("") + ylab("dispersion") + ggtitle("COVID-19 spatial dispersion") +
+  # coord_trans(y="log10") +
   theme_custom + theme(legend.position="none")
 p_com_2
 p_com <- p_com_1 + p_com_2
