@@ -1,7 +1,7 @@
 # covid19-vis
 Some quick plots of data from the COVID-19 outbreak, data sourced from [here](https://github.com/CSSEGISandData/COVID-19). 
 
-Latest data is from **6<sup>th</sup> March 2020**.
+Latest data is from **7<sup>th</sup> March 2020**.
 
 ## Caveats
 
@@ -47,7 +47,7 @@ Latest data is from **6<sup>th</sup> March 2020**.
 
 ![](pics/p_recovered_facet.png)
 
-* Mortality and recovery animated over time (top six countries only). Each dot represents a country, with the dot size proportional to the number of cases. The main dot (China) moves to the right over time, indicating more recovered cases, while the other countries are yet to settle into a stable pattern. Note that even China, on the most recent day available, still has only ~55% recovered and ~3% mortality, indicating >40% of known cases are ongoing.
+* Mortality and recovery animated over time (top six countries only). Each dot represents a country, with the dot size proportional to the number of cases. The main dot (China) moves to the right over time, indicating more recovered cases, while the other countries are yet to settle into a stable pattern. Note that even China, on the most recent day available, still has only ~65% recovered and ~3% mortality, indicating ~30% of known cases are ongoing.
 
 ![](pics/anim_mortality_recovered.gif)
 
@@ -65,7 +65,11 @@ Latest data is from **6<sup>th</sup> March 2020**.
 
 ## Maps
 
-* Just some straightforward maps showing number of cases with the most recent data.
+* A look at the moving "centre of mass" from above, on a geographical map.
+
+![](pics/map_com.png)
+
+* Now, some straightforward maps showing number of cases with the most recent data.
 
 ![](pics/map.png)
 

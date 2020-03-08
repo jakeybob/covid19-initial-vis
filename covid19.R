@@ -350,7 +350,7 @@ p_com_4 <- com_df %>%
   theme_custom + theme(legend.position = "none")
 p_com_4  
 
-ggsave("pics/p_com_proj.png", device = "png", dpi="retina", width=200, height=200, units="mm")
+ggsave("pics/p_com_proj.png", device = "png", dpi="retina", width=300, height=200, units="mm")
 
 
 #### LEAFLET ####
@@ -379,3 +379,27 @@ mapshot(map %>% addProviderTiles(providers$Stamen.Watercolor),
         file = file.path(getwd(), "pics/map2.png"),
         vheight = 1000, vwidth = 2100)
 
+# geographical moving c.o.m
+map_com <- com_df %>%
+  leaflet() %>%
+  setView(zoom=6.2, lat=26, lng=110) %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
+  # addProviderTiles(providers$Stamen.Terrain) %>%
+  addPolylines(lat = ~com_lat, lng = ~com_long, color = "blue", weight = 5, opacity=.8) %>%
+  addCircleMarkers(lng = ~com_long, lat = ~com_lat, stroke=F,
+                   radius=~sqrt(n_cases)/30, fillColor = "blue", fillOpacity = .8) %>%
+  addLabelOnlyMarkers(lng = filter(com_df %>% ungroup(), day==max(day))$com_long, 
+                      lat = filter(com_df %>% ungroup(), day==max(day))$com_lat,
+    label = format(filter(com_df %>% ungroup(), day==max(day))$date, format="%B %d %Y"),
+    labelOptions = labelOptions(noHide = T, direction = "bottom",
+                                # offset = c(8,4),
+                                style=list("font-style" = "bold",
+                                           "font-family" = "sans-serif",
+                                           "font-size" = "20px",
+                                           # "background" = "rgba(0,0,255,1)",
+                                           "border-color" = "rgba(0,0,0,0.5)",
+                                           "color" = "black"))) 
+
+mapshot(map_com, 
+        file = file.path(getwd(), "pics/map_com.png"),
+        vheight = 1000, vwidth = 1000)
