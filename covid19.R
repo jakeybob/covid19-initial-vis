@@ -343,7 +343,7 @@ p_com_4 <- com_df %>%
            ymin = 0, ymax = Inf, alpha = 0.3, fill = "red") +
   annotate(geom = "text",
            colour = "red", fontface = 2,
-           label = format(date_disp, format="%d %b %Y → ") ,
+           label = format(date_disp, format="%b %d %Y → ") ,
            x = date_disp,
            y = .005,
            hjust = "right") +
