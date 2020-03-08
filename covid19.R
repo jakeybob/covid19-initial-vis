@@ -257,17 +257,18 @@ anim_save("pics/anim_mortality_recovered.gif")
 # weighted average of lat/long over sphere
 com_df <- df %>%
   mutate(lat = pi*lat/180, long = pi*long/180) %>%
-  group_by(lat, long, date) %>%
+  group_by(lat, long, date, day) %>%
   summarise(n_cases = sum(n_cases, na.rm=T)) %>%
   mutate(x = cos(lat)*cos(long), y = sin(lat)*cos(long), z = sin(long)) %>%
-  group_by(date) %>%
+  group_by(date, day) %>%
   summarise(com_x = sum(n_cases*x, na.rm = T) / sum(n_cases, na.rm = T),
             com_y = sum(n_cases*y, na.rm = T) / sum(n_cases, na.rm = T),
             com_z = sum(n_cases*z, na.rm = T) / sum(n_cases, na.rm = T),
             n_cases = sum(n_cases, na.rm=T)) %>%
   mutate(com_lat = (180/pi)*atan2(com_y, com_x)+180,
          com_long = 180-(180/pi)*atan2(com_z, sqrt(com_x^2 + com_y^2)),
-         r = sqrt(com_x^2 + com_y^2 + com_z^2)) %>%
+         r = sqrt(com_x^2 + com_y^2 + com_z^2),
+         d = 1 -r) %>%
   arrange(date)
 
 p_com_1 <- com_df %>%
@@ -284,18 +285,72 @@ p_com_1 <- com_df %>%
                        legend.title=element_text(size=10, family = "Source Sans Pro"))
 p_com_1
 p_com_2 <- com_df %>%
-  ggplot(aes(x=date, y=1-r)) +
+  ggplot(aes(x=date, y=d)) +
   geom_point(aes(size = n_cases, colour=date)) +
   geom_line() +
   theme(legend.position = "none") +
   xlab("") + ylab("dispersion") + ggtitle("COVID-19 spatial dispersion") +
-  # coord_trans(y="log10") +
   theme_custom + theme(legend.position="none")
 p_com_2
 p_com <- p_com_1 + p_com_2
 p_com
 
 ggsave("pics/p_com.png", device = "png", dpi="retina", width=300, height=200, units="mm")
+
+# log plot
+# p_com_3 <- com_df %>%
+#   ggplot(aes(x=date, y=d)) +
+#   geom_point(aes(size = n_cases, colour=date)) +
+#   geom_line() +
+#   theme(legend.position = "none") +
+#   xlab("") + ylab("dispersion") + ggtitle("COVID-19 spatial dispersion") +
+#   coord_trans(y="log10") +
+#   theme_custom + theme(legend.position="none")
+# p_com_3
+
+spread_base_date <- dmy("20-02-2020") # date exponential behaviour begins
+exp_fit_df <- com_df %>% ungroup() %>%
+  filter(date >= spread_base_date,
+         date <= max(date, na.rm=T))
+
+model <-lm(log(d) ~ day, exp_fit_df) # fit log model to this data (using day rather than date as is numeric)
+m <- model$coefficients["day"] 
+c <- model$coefficients["(Intercept)"]
+
+day_disp <- floor(-c/m) # day on which d will be >= 1
+date_disp <- spread_base_date + days(day_disp - min(exp_fit_df$day))
+
+# df of model data, will include min date, max date and date where d => 1
+exp_model_df <- exp_fit_df %>%
+  select(date, day) %>%
+  filter(date == min(date) | date == max(date)) %>%
+  bind_rows(tibble(date = date_disp+days(1), day = day_disp+1)) %>%
+  mutate(d = exp((m*day)+c )) %>%
+  arrange(date)
+
+p_com_4 <- com_df %>%
+  filter(date >= dmy("15-02-2020")) %>%
+  ggplot(aes(x=date, y=d)) +
+  geom_line() +
+  geom_point(aes(size = n_cases, colour=day)) +
+  theme(legend.position = "none") +
+  xlab("") + ylab("dispersion") + ggtitle("COVID-19 spatial dispersion projection") +
+  geom_line(data = exp_model_df, colour="red", size=1) +
+  scale_y_log10(breaks = c( .1, .5, 1)) +
+  geom_hline(yintercept = 1) +
+  annotate(geom = "rect", 
+           xmin = date_disp, xmax = date_disp + days(1),
+           ymin = 0, ymax = Inf, alpha = 0.3, fill = "red") +
+  annotate(geom = "text",
+           colour = "red", fontface = 2,
+           label = format(date_disp, format="%d %b %Y → ") ,
+           x = date_disp,
+           y = .005,
+           hjust = "right") +
+  theme_custom + theme(legend.position = "none")
+p_com_4  
+
+ggsave("pics/p_com_proj.png", device = "png", dpi="retina", width=200, height=200, units="mm")
 
 
 #### LEAFLET ####
