@@ -224,7 +224,7 @@ anim <- plot_data %>%
   geom_point(aes(colour=area, size=n_cases)) +
   theme_custom  + theme(legend.title=element_text(size=10, family = "Source Sans Pro")) +
   scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .1)) +
-  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .7)) +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .75)) +
   scale_size_continuous(labels = comma) +
   labs(title = 'COVID-19 Recovery/Mortality {frame_time}', x = 'recovered', y = 'mortality', 
        size="cases", colour="") +
