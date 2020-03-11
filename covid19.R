@@ -38,7 +38,12 @@ df <- read_csv("data/covid19_confirmed.csv") %>%
                        "United Arab Emirates" = "UAE",
                        "North Macedonia" = "N. Macedonia",
                        "Bosnia and Herzegovina" = "Bosnia & Herzegovina",
-                       "Saint Barthelemy" = "St Barthelemy"))
+                       "Saint Barthelemy" = "St Barthelemy",
+                       "Iran (Islamic Republic of)" = "Iran",
+                       "occupied Palestinian territory" = "OPT",
+                       "Taipei and environs" = "Taipei",
+                       "Hong Kong SAR" = "Hong Kong",
+                       "Macao SAR" = "Macao"))
 
 # mortality rate by country
 mortality_country <- df %>%
@@ -78,14 +83,15 @@ p_cases_country_facet <- df %>%
   ggplot(aes(x = date, y = n_cases, group=area)) +
   geom_point(size=dot_size-2) + geom_step(size=line_size-1) +
   scale_y_continuous(labels=comma) +
-  facet_wrap(~area, scales = "free_y", labeller=label_wrap_gen(width = 20, multi_line = FALSE)) +
+  facet_wrap(~area, scales = "free_y", labeller=label_wrap_gen(width = 20, multi_line = T),
+             ncol = 10) +
   ggtitle("COVID-19 cumulative cases") + xlab("") + ylab("") +
   theme_custom + theme(axis.text.x = element_text(angle = 90),
                        axis.text.y = element_text(size=8),
                        strip.text = element_text(size = 9, face = "bold"))
 
 # p_cases_country_facet
-ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=300, height=300, units="mm")
+ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=320, height=340, units="mm")
 
 
 #### RATE OF NEW CASES ####
@@ -382,7 +388,7 @@ mapshot(map %>% addProviderTiles(providers$Stamen.Watercolor),
 # geographical moving c.o.m
 map_com <- com_df %>%
   leaflet() %>%
-  setView(zoom=6.2, lat=26, lng=110) %>%
+  setView(zoom=6.2, lat=25, lng=110) %>%
   addProviderTiles(providers$Stamen.TonerLite) %>%
   # addProviderTiles(providers$Stamen.Terrain) %>%
   addPolylines(lat = ~com_lat, lng = ~com_long, color = "blue", weight = 5, opacity=.8) %>%
@@ -391,7 +397,7 @@ map_com <- com_df %>%
   addLabelOnlyMarkers(lng = filter(com_df %>% ungroup(), day==max(day))$com_long, 
                       lat = filter(com_df %>% ungroup(), day==max(day))$com_lat,
     label = format(filter(com_df %>% ungroup(), day==max(day))$date, format="%B %d %Y"),
-    labelOptions = labelOptions(noHide = T, direction = "bottom",
+    labelOptions = labelOptions(noHide = T, direction = "right",
                                 # offset = c(8,4),
                                 style=list("font-style" = "bold",
                                            "font-family" = "sans-serif",
@@ -402,4 +408,4 @@ map_com <- com_df %>%
 
 mapshot(map_com, 
         file = file.path(getwd(), "pics/map_com.png"),
-        vheight = 1000, vwidth = 1000)
+        vheight = 1200, vwidth = 1000)
