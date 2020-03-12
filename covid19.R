@@ -388,7 +388,7 @@ mapshot(map %>% addProviderTiles(providers$Stamen.Watercolor),
 # geographical moving c.o.m
 map_com <- com_df %>%
   leaflet() %>%
-  setView(zoom=6.2, lat=25, lng=110) %>%
+  setView(zoom=5, lat=20, lng=110) %>%
   addProviderTiles(providers$Stamen.TonerLite) %>%
   # addProviderTiles(providers$Stamen.Terrain) %>%
   addPolylines(lat = ~com_lat, lng = ~com_long, color = "blue", weight = 5, opacity=.8) %>%
