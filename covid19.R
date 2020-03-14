@@ -229,8 +229,8 @@ anim <- plot_data %>%
   ggplot(aes(x = percent_recovered, y = percent_deaths)) +
   geom_point(aes(colour=area, size=n_cases)) +
   theme_custom  + theme(legend.title=element_text(size=10, family = "Source Sans Pro")) +
-  scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .1)) +
-  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .75)) +
+  scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .07)) +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .85)) +
   scale_size_continuous(labels = comma) +
   labs(title = 'COVID-19 Recovery/Mortality {frame_time}', x = 'recovered', y = 'mortality', 
        size="cases", colour="") +
@@ -261,6 +261,7 @@ anim_save("pics/anim_mortality_recovered.gif")
 
 #### SPATIAL EVOLUTION ####
 # weighted average of lat/long over sphere
+com_filter <- 48 # day beyond which c.o.m averaging breaks down
 com_df <- df %>%
   mutate(lat = pi*lat/180, long = pi*long/180) %>%
   group_by(lat, long, date, day) %>%
@@ -274,10 +275,11 @@ com_df <- df %>%
   mutate(com_lat = (180/pi)*atan2(com_y, com_x)+180,
          com_long = 180-(180/pi)*atan2(com_z, sqrt(com_x^2 + com_y^2)),
          r = sqrt(com_x^2 + com_y^2 + com_z^2),
-         d = 1 -r) %>%
+         d = 1 -r,
+         com_lat = if_else(com_lat >= 180, com_lat-360, com_lat)) %>%
   arrange(date)
 
-p_com_1 <- com_df %>%
+p_com_1 <- com_df %>% filter(day <= com_filter) %>%
   ggplot(aes(x=com_long, y=com_lat)) +
   geom_point(aes(size = n_cases, colour=date)) +
   geom_path(arrow = arrow(type="closed")) +
@@ -386,6 +388,8 @@ mapshot(map %>% addProviderTiles(providers$Stamen.Watercolor),
         vheight = 1000, vwidth = 2100)
 
 # geographical moving c.o.m
+
+com_df <- com_df %>% filter(day <= com_filter)
 map_com <- com_df %>%
   leaflet() %>%
   setView(zoom=5, lat=20, lng=110) %>%
