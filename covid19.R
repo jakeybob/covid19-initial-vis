@@ -91,7 +91,7 @@ p_cases_country_facet <- df %>%
                        strip.text = element_text(size = 9, face = "bold"))
 
 # p_cases_country_facet
-ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=320, height=340, units="mm")
+ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=320, height=400, units="mm")
 
 
 #### RATE OF NEW CASES ####
