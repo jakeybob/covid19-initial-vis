@@ -37,13 +37,22 @@ df <- read_csv("data/covid19_confirmed.csv") %>%
   mutate(area = recode(area, "Mainland China" = "China",
                        "United Arab Emirates" = "UAE",
                        "North Macedonia" = "N. Macedonia",
-                       "Bosnia and Herzegovina" = "Bosnia & Herzegovina",
+                       "Bosnia and Herzegovina" = "Bosnia/Herzegovina",
                        "Saint Barthelemy" = "St Barthelemy",
                        "Iran (Islamic Republic of)" = "Iran",
                        "occupied Palestinian territory" = "OPT",
                        "Taipei and environs" = "Taipei",
                        "Hong Kong SAR" = "Hong Kong",
-                       "Macao SAR" = "Macao"))
+                       "Macao SAR" = "Macao", 
+                       "Saint Vincent and the Grenadines" = "St Vincent/Grenadines", 
+                       "United Kingdom" = "UK",
+                       "Republic of the Congo" = "Congo (Republic)",
+                       "Dominican Republic" = "Dom. Republic",
+                       "Equatorial Guinea" = "Eq. Guinea",
+                       "Trinidad and Tobago" = "Trinidad/Tobago",
+                       "Antigua and Barbuda" = "Antigua/Barbuda",
+                       "Central African Republic" = "CAR",
+                       "US" = "USA"))
 
 # mortality rate by country
 mortality_country <- df %>%
@@ -84,14 +93,14 @@ p_cases_country_facet <- df %>%
   geom_point(size=dot_size-2) + geom_step(size=line_size-1) +
   scale_y_continuous(labels=comma) +
   facet_wrap(~area, scales = "free_y", labeller=label_wrap_gen(width = 20, multi_line = T),
-             ncol = 10) +
+             ncol = 9) +
   ggtitle("COVID-19 cumulative cases") + xlab("") + ylab("") +
   theme_custom + theme(axis.text.x = element_text(angle = 90),
                        axis.text.y = element_text(size=8),
                        strip.text = element_text(size = 9, face = "bold"))
 
 # p_cases_country_facet
-ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=320, height=400, units="mm")
+ggsave("pics/p_cases_country_facet.png", device = "png", dpi="retina", width=320, height=500, units="mm")
 
 
 #### RATE OF NEW CASES ####
@@ -228,10 +237,10 @@ plot_data <- df %>%
 anim <- plot_data %>%
   ggplot(aes(x = percent_recovered, y = percent_deaths)) +
   geom_point(aes(colour=area, size=n_cases)) +
+  scale_size_continuous(range = c(4, 20), labels = comma) +
   theme_custom  + theme(legend.title=element_text(size=10, family = "Source Sans Pro")) +
-  scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .07)) +
-  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .85)) +
-  scale_size_continuous(labels = comma) +
+  scale_y_continuous(labels = percent_format(accuracy = 1), limits=c(0, .06)) +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits=c(0, .9)) +
   labs(title = 'COVID-19 Recovery/Mortality {frame_time}', x = 'recovered', y = 'mortality', 
        size="cases", colour="") +
   transition_time(date) +
