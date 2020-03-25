@@ -1,6 +1,8 @@
 # covid19-vis
 Some quick plots of data from the COVID-19 outbreak, data sourced from [here](https://github.com/CSSEGISandData/COVID-19). 
 
+*no longer updating as these quick analyses of the initial outbreak are sadly no longer very instructive*
+
 Latest data is from **16<sup>th</sup> March 2020**.
 
 ## Caveats
